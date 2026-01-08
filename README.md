@@ -1,5 +1,3 @@
-# Raylib Template
-
 ## Quick Start
 
 ```console
