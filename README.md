@@ -54,7 +54,7 @@ Requires [raylib](https://www.raylib.com/) for visualization.
 
 - **Linux:** raylib 5.5 is included in the repo — no installation needed.
 
-- **For other systems:** download the source code of [raylib](https://github.com/raysan5/raylib.git) 
+- **For other systems:** Install using package manager/download the source code of [raylib](https://github.com/raysan5/raylib.git) an build manually.
 
 ```bash
 # manually with gcc
