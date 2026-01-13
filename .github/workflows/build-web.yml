@@ -1,0 +1,59 @@
+name: Build and Deploy Web
+
+on:
+  push:
+    branches: [master, main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Emscripten
+        uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: 3.1.51
+
+      - name: Clone and Build Raylib for Web
+        run: |
+          git clone --depth 1 --branch 5.5 https://github.com/raysan5/raylib.git
+          cd raylib/src
+          make PLATFORM=PLATFORM_WEB -j$(nproc)
+
+      - name: Build Game for Web
+        run: |
+          mkdir -p web
+          emcc main.c taxi.c -o web/index.html \
+            -I raylib/src \
+            raylib/src/libraylib.a \
+            -s USE_GLFW=3 \
+            -s ASYNCIFY \
+            -s TOTAL_MEMORY=67108864 \
+            -s ALLOW_MEMORY_GROWTH=1 \
+            -O3
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: web
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
