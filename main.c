@@ -77,6 +77,25 @@ void render_taxi(CTaxiEnv *env)
 			 LIGHTGRAY);
 	}
 
+	// Draw walls (V_WALLS[r][c] == 1 means wall to the right of cell)
+	static const int V_WALLS[5][5] = {{0, 1, 0, 0, 0},
+					  {0, 1, 0, 0, 0},
+					  {0, 0, 0, 0, 0},
+					  {0, 1, 0, 1, 0},
+					  {0, 1, 0, 1, 0}};
+	for (int r = 0; r < 5; ++r) {
+		for (int c = 0; c < 5; ++c) {
+			if (V_WALLS[r][c] == 1) {
+				int x = (c + 1) * rc->cell_size;
+				int y1 = r * rc->cell_size;
+				int y2 = (r + 1) * rc->cell_size;
+				DrawLineEx((Vector2){(float)x, (float)y1},
+					   (Vector2){(float)x, (float)y2}, 4.0f,
+					   BLACK);
+			}
+		}
+	}
+
 	Color colors[4] = {RED, GREEN, YELLOW, BLUE};
 	const char *labels[4] = {"R", "G", "Y", "B"};
 	for (int i = 0; i < 4; ++i) {
@@ -104,7 +123,7 @@ void render_taxi(CTaxiEnv *env)
 	DrawRectangle(env->taxi_col * rc->cell_size + 20,
 		      env->taxi_row * rc->cell_size + 20, 60, 60, taxiColor);
 
-	DrawText("TAXI SMART AGENT", 10, 510, 20, DARKGRAY);
+	DrawText("AGENT", 10, 510, 20, DARKGRAY);
 	DrawText(TextFormat("Reward: %.1f", env->rewards[0]), 300, 510, 20,
 		 BLACK);
 	EndDrawing();
@@ -123,7 +142,7 @@ void show_learning_graph()
 	int plot_width = window_width - left_margin - right_margin;
 	int plot_height = window_height - top_margin - bottom_margin;
 
-	InitWindow(window_width, window_height, "Phase 1.5: Learning Curve");
+	InitWindow(window_width, window_height, "Learning Curve");
 	SetTargetFPS(60);
 
 	float max_val = -FLT_MAX;
@@ -354,7 +373,7 @@ int main()
 
 	show_learning_graph();
 
-	InitWindow(500, 550, "Taxi - Debug View");
+	InitWindow(500, 550, "Debug View");
 	SetTargetFPS(2); // Slow FPS to read console logs
 
 	reset_taxi(&env);
@@ -367,7 +386,7 @@ int main()
 					 env.pass_idx, env.dest_idx);
 		int best_action = 0;
 
-		printf("\n[LIVE] State %d Values: ", state);
+		printf("\n[INFO] State %d Values: ", state);
 		for (int a = 0; a < NUM_ACTIONS; a++) {
 			printf("%s:%.2f  ", get_action_name(a),
 			       q_table[state][a]);
