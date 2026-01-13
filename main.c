@@ -184,8 +184,9 @@ void show_learning_graph()
 		ClearBackground(RAYWHITE);
 
 		DrawText("TRAINING PERFORMANCE", left_margin, 10, 20, DARKGRAY);
-		DrawText("Press SPACE to Start Simulation", left_margin,
-			 window_height - 25, 20, DARKGREEN);
+		DrawText("[INFO]Training Complete: Press SPACE to Start the "
+			 "Simulation",
+			 left_margin, window_height - 25, 20, DARKGREEN);
 
 		for (int i = 0; i <= 5; i++) {
 			float normalized = (float)i / 5.0f;
